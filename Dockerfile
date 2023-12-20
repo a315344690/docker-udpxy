@@ -19,4 +19,4 @@ COPY --from=builder /usr/local/bin/udpxrec /usr/local/bin/udpxrec
 EXPOSE 4000/tcp
 
 ENTRYPOINT ["/usr/local/bin/udpxy"]
-CMD ["-v", "-T", "-p", "4000", "-B", "65535"]
+CMD ["-v", "-T", "-S", "-p", "4000", "-R", "-1", "-H", "-1", "-M", "55", "-c", "20", "-B", "1Mb"]
