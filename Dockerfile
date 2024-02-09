@@ -16,7 +16,7 @@ FROM ${ARCH}alpine:latest
 COPY --from=builder /usr/local/bin/udpxy /usr/local/bin/udpxy
 COPY --from=builder /usr/local/bin/udpxrec /usr/local/bin/udpxrec
 
-EXPOSE 4000/tcp
+EXPOSE 80/tcp
 
 ENTRYPOINT ["/usr/local/bin/udpxy"]
-CMD ["-v", "-T", "-S", "-p", "4000", "-R", "-1", "-H", "-1", "-M", "55", "-c", "20", "-B", "1Mb"]
+CMD ["-v", "-T", "-S", "-p", "80", "-R", "-1", "-H", "-1", "-M", "55", "-c", "20", "-B", "1Mb"]
