@@ -1,22 +1,19 @@
-ARG ARCH=
+# Dockerfile for phantun based alpine
+FROM alpine:latest
+LABEL maintainer="xyzvps"
 
-FROM ${ARCH}alpine:latest as builder
+WORKDIR /root
 
-LABEL maintainer="1673590+5Ub-Z3r0@users.noreply.github.com"
+RUN apk add iptables \
+&& wget -q -O /root/phantun.zip "https://github.com/dndx/phantun/releases/latest/download/phantun_aarch64-unknown-linux-musl.zip" \
+&& unzip -o /root/phantun.zip -d /usr/local/bin/ \
+&& rm -f /root/phantun.zip
 
-RUN apk update && apk add make gcc git libc-dev openssh-client
+COPY ./phantun_init.sh /
 
-WORKDIR /tmp
-RUN git clone https://github.com/pcherenkov/udpxy.git \
-    && cd udpxy/chipmunk \
-    && make && make install
+ENV LOCAL_PORT=12345
+ENV REMOTE_ADDR=127.0.0.1
+ENV REMOTE_PORT=54321
 
-FROM ${ARCH}alpine:latest
-
-COPY --from=builder /usr/local/bin/udpxy /usr/local/bin/udpxy
-COPY --from=builder /usr/local/bin/udpxrec /usr/local/bin/udpxrec
-
-EXPOSE 80/tcp
-
-ENTRYPOINT ["/usr/local/bin/udpxy"]
-CMD ["-v", "-T", "-S", "-p", "4000", "-c", "20"]
+CMD /phantun_init.sh \$LOCAL_PORT \$REMOTE_ADDR \$REMOTE_PORT
+EOF
