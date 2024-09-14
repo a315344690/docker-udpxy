@@ -1,18 +1,12 @@
-# Dockerfile for phantun based alpine
-FROM alpine:latest
-LABEL maintainer="xyzvps"
+FROM alpine:3.18
 
-WORKDIR /root
+RUN apk update \
+  && apk upgrade \
+  && apk add --no-cache iptables \
+  && rm -rf /var/cache/apk/*
 
-RUN apk add iptables \
-&& wget -q -O /root/phantun.zip "https://github.com/dndx/phantun/releases/latest/download/phantun_aarch64-unknown-linux-musl.zip" \
-&& unzip -o /root/phantun.zip -d /usr/local/bin/ \
-&& rm -f /root/phantun.zip
+COPY entrypoint.sh /usr/sbin/
+COPY phantun.sh /usr/sbin/
+COPY phantun_client /usr/sbin/
 
-COPY ./phantun_init.sh /
-
-ENV LOCAL_PORT=12345
-ENV REMOTE_ADDR=127.0.0.1
-ENV REMOTE_PORT=54321
-
-CMD /phantun_init.sh \$LOCAL_PORT \$REMOTE_ADDR \$REMOTE_PORT
+ENTRYPOINT ["/usr/sbin/entrypoint.sh"]
